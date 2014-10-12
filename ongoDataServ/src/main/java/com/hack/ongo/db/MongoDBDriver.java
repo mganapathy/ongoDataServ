@@ -266,4 +266,97 @@ public class MongoDBDriver {
 			return ngoList;
 		}
 		
+public static DBObject createEventDBObject(Event event) {
+	    	
+	        BasicDBObjectBuilder docBuilder = BasicDBObjectBuilder.start();
+	                                 
+	        docBuilder.append("_id", event.getId());
+	        docBuilder.append("eventTitle", event.getEventTitle());
+	        docBuilder.append("eventOwner", event.getEventOwner());
+	        docBuilder.append("eventDesc", event.getEventDesc());
+	        docBuilder.append("volunteers", event.getVolunteers());
+	        docBuilder.append("startDate", event.getStartDate());
+	        docBuilder.append("endDate", event.getEndDate());
+	        return docBuilder.get();
+	        
+	    }
+public static void insertEventData(Event event) throws Exception {
+		    
+		       //Event event = createEvent(request);
+		       DBObject doc = createEventDBObject(event);
+		      
+		       MongoClient mongo = new MongoClient("localhost", 27017);
+		       
+		       DB db = mongo.getDB("hacktest");
+		        
+		       DBCollection col = db.getCollection("events");
+		       
+		       //System.out.println("dbobject == " + doc);
+		       
+		       WriteResult result = col.insert(doc);
+
+		       //System.out.println(result.getN());
+		       //System.out.println(result.getLastConcern());
+
+		       //read example
+		       DBObject query = BasicDBObjectBuilder.start().add("_id", event.getId()).get();
+		       DBCursor cursor = col.find(query);
+		       while(cursor.hasNext()){
+		       	DBObject object = cursor.next();
+		           System.out.println(object);
+		       }
+	    }
+	    
+	    public static DBObject getEvent(int id) throws UnknownHostException {
+			
+			MongoClient mongo = new MongoClient("localhost", 27017);
+			DB db = mongo.getDB("hacktest");
+			BasicDBObject result = new BasicDBObject();
+			
+			DBCollection col = db.getCollection("events");
+
+			//BasicDBObject keys = new BasicDBObject();
+			//keys.put("id", id);
+			BasicDBObject query = new BasicDBObject("_id", id);
+			
+			DBCursor cursor = col.find(query);
+			try {
+			while (cursor.hasNext()) {
+				DBObject object = cursor.next();
+				System.out.println(object);
+				return object;
+			}
+			}	finally {
+				   cursor.close();
+				}
+			return null;
+
+		}
+
+	   public static List<BasicDBObject> getEventsForNGO(String name) throws UnknownHostException {
+			
+			MongoClient mongo = new MongoClient("localhost", 27017);
+			DB db = mongo.getDB("hacktest");
+			//BasicDBObject result = new BasicDBObject();
+			
+			DBCollection col = db.getCollection("events");
+
+			//BasicDBObject keys = new BasicDBObject();
+			//keys.put("id", id);
+			BasicDBObject query = new BasicDBObject("eventOwner", name);
+			
+			DBCursor cursor = col.find(query);
+			List<BasicDBObject> res = new ArrayList<BasicDBObject>();
+			try {
+			while (cursor.hasNext()) {
+				res.add((BasicDBObject)cursor.next());
+			}
+			}finally {
+				   cursor.close();
+				}
+			return res;
+
+		}
+
+		
 }
