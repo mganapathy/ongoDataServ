@@ -2,6 +2,7 @@
 package com.ongo.controller;
 
 import java.lang.reflect.Array;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import com.hack.ongo.db.User;
 import com.mongodb.BasicDBObject;
 import com.ongo.model.Employee;
 import com.ongo.model.Status;
+import com.hack.ongo.db.Event;
 
 @Controller
 @RequestMapping("/ngo")
@@ -108,4 +110,38 @@ public class NGOController {
 		}
 		return user;
 	}
-*/}
+	
+	*/
+	
+	@RequestMapping(value = "/viewEventsForNGO/{name}", method = RequestMethod.GET)
+	public @ResponseBody
+	List<Event> getEvent(@PathVariable("name") String name) {
+		
+		List<BasicDBObject> basicDBObject = new ArrayList<BasicDBObject>();
+		try {
+			basicDBObject = MongoDBDriver.getEventsForNGO(name);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		List<Event> eventList = new ArrayList<Event>();
+		for(BasicDBObject dbObj: basicDBObject){
+			try {
+
+				Event event = new Event();
+				event.setId(dbObj.getString("_id"));
+				event.setEventTitle(dbObj.getString("eventTitle"));
+				event.setEventOwner(dbObj.getString("eventOwner"));
+				event.setEventDesc(dbObj.getString("eventDesc"));
+				event.setStartDate(dbObj.getString("startDate"));
+				event.setEndDate(dbObj.getString("endDate"));
+				event.setVolunteers(dbObj.getString("volunteers").split(","));
+				eventList.add(event);
+				 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		return eventList;
+	}
+}
