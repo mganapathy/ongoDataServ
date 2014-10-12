@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hack.ongo.db.MongoDBDriver;
-import com.hack.ongo.db.User;
 import com.ongo.model.Employee;
 import com.ongo.model.Status;
+import com.ongo.model.User;
 import com.ongo.services.DataServices;
 
 @Controller
