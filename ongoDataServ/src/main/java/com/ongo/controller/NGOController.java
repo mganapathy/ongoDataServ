@@ -19,7 +19,6 @@ import org.springframework.web.servlet.HttpServletBean;
 import com.google.gson.JsonObject;
 import com.hack.ongo.db.MongoDBDriver;
 import com.hack.ongo.db.NGO;
-import com.hack.ongo.db.User;
 import com.mongodb.BasicDBObject;
 import com.ongo.model.Employee;
 import com.ongo.model.Status;
